@@ -4,39 +4,39 @@ import { useProjectSettingStore } from '@/store/modules/projectSetting';
 export function useProjectSetting() {
   const projectStore = useProjectSettingStore();
 
-  const navMode = computed(() => projectStore.navMode);
+  const getNavMode = computed(() => projectStore.navMode);
 
-  const navTheme = computed(() => projectStore.navTheme);
+  const getNavTheme = computed(() => projectStore.navTheme);
 
-  const isMobile = computed(() => projectStore.isMobile);
+  const getIsMobile = computed(() => projectStore.isMobile);
 
-  const headerSetting = computed(() => projectStore.headerSetting);
+  const getHeaderSetting = computed(() => projectStore.headerSetting);
 
-  const multiTabsSetting = computed(() => projectStore.multiTabsSetting);
+  const getMultiTabsSetting = computed(() => projectStore.multiTabsSetting);
 
-  const menuSetting = computed(() => projectStore.menuSetting);
+  const getMenuSetting = computed(() => projectStore.menuSetting);
 
-  const crumbsSetting = computed(() => projectStore.crumbsSetting);
+  const getCrumbsSetting = computed(() => projectStore.crumbsSetting);
 
-  const permissionMode = computed(() => projectStore.permissionMode);
+  const getPermissionMode = computed(() => projectStore.permissionMode);
 
-  const showFooter = computed(() => projectStore.showFooter);
+  const getShowFooter = computed(() => projectStore.showFooter);
 
-  const isPageAnimate = computed(() => projectStore.isPageAnimate);
+  const getIsPageAnimate = computed(() => projectStore.isPageAnimate);
 
-  const pageAnimateType = computed(() => projectStore.pageAnimateType);
+  const getPageAnimateType = computed(() => projectStore.pageAnimateType);
 
   return {
-    navMode,
-    navTheme,
-    isMobile,
-    headerSetting,
-    multiTabsSetting,
-    menuSetting,
-    crumbsSetting,
-    permissionMode,
-    showFooter,
-    isPageAnimate,
-    pageAnimateType,
+    getNavMode,
+    getNavTheme,
+    getIsMobile,
+    getHeaderSetting,
+    getMultiTabsSetting,
+    getMenuSetting,
+    getCrumbsSetting,
+    getPermissionMode,
+    getShowFooter,
+    getIsPageAnimate,
+    getPageAnimateType,
   };
 }

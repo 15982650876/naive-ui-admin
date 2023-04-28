@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
+import { store } from '@/store';
 import projectSetting from '@/settings/projectSetting';
-import type { IHeaderSetting, IMenuSetting, IMultiTabsSetting, ICrumbsSetting } from '/#/config';
+import type { IheaderSetting, ImenuSetting, ImultiTabsSetting, IcrumbsSetting } from '/#/config';
 
 const {
   navMode,
@@ -19,11 +20,11 @@ const {
 interface ProjectSettingState {
   navMode: string; //导航模式
   navTheme: string; //导航风格
-  headerSetting: IHeaderSetting; //顶部设置
+  headerSetting: IheaderSetting; //顶部设置
   showFooter: boolean; //页脚
-  menuSetting: IMenuSetting; //多标签
-  multiTabsSetting: IMultiTabsSetting; //多标签
-  crumbsSetting: ICrumbsSetting; //面包屑
+  menuSetting: ImenuSetting; //多标签
+  multiTabsSetting: ImultiTabsSetting; //多标签
+  crumbsSetting: IcrumbsSetting; //面包屑
   permissionMode: string; //权限模式
   isPageAnimate: boolean; //是否开启路由动画
   pageAnimateType: string; //路由动画类型
@@ -89,3 +90,8 @@ export const useProjectSettingStore = defineStore({
     },
   },
 });
+
+// Need to be used outside the setup
+export function useProjectSettingStoreWithOut() {
+  return useProjectSettingStore(store);
+}

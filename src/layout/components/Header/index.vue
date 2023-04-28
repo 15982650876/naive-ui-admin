@@ -75,7 +75,7 @@
       <div
         class="layout-header-trigger layout-header-trigger-min"
         v-for="item in iconList"
-        :key="item.icon"
+        :key="item.icon.name"
       >
         <n-tooltip placement="bottom">
           <template #trigger>
@@ -134,7 +134,7 @@
   import { NDialogProvider, useDialog, useMessage } from 'naive-ui';
   import { TABS_ROUTES } from '@/store/mutation-types';
   import { useUserStore } from '@/store/modules/user';
-  import { useScreenLockStore } from '@/store/modules/screenLock';
+  import { useLockscreenStore } from '@/store/modules/lockscreen';
   import ProjectSetting from './ProjectSetting.vue';
   import { AsideMenu } from '@/layout/components/Menu';
   import { useProjectSetting } from '@/hooks/setting/useProjectSetting';
@@ -153,37 +153,37 @@
     },
     setup(props) {
       const userStore = useUserStore();
-      const useLockscreen = useScreenLockStore();
+      const useLockscreen = useLockscreenStore();
       const message = useMessage();
       const dialog = useDialog();
-      const { navMode, navTheme, headerSetting, menuSetting, crumbsSetting } = useProjectSetting();
+      const { getNavMode, getNavTheme, getHeaderSetting, getMenuSetting, getCrumbsSetting } =
+        useProjectSetting();
 
-      const { name } = userStore?.info || {};
+      const { username } = userStore?.info || {};
 
       const drawerSetting = ref();
 
       const state = reactive({
-        username: name ?? '',
+        username: username || '',
         fullscreenIcon: 'FullscreenOutlined',
-        navMode,
-        navTheme,
-        headerSetting,
-        crumbsSetting,
+        navMode: getNavMode,
+        navTheme: getNavTheme,
+        headerSetting: getHeaderSetting,
+        crumbsSetting: getCrumbsSetting,
       });
 
       const getInverted = computed(() => {
-        return ['light', 'header-dark'].includes(unref(navTheme))
-          ? props.inverted
-          : !props.inverted;
+        const navTheme = unref(getNavTheme);
+        return ['light', 'header-dark'].includes(navTheme) ? props.inverted : !props.inverted;
       });
 
       const mixMenu = computed(() => {
-        return unref(menuSetting).mixMenu;
+        return unref(getMenuSetting).mixMenu;
       });
 
       const getChangeStyle = computed(() => {
         const { collapsed } = props;
-        const { minMenuWidth, menuWidth } = unref(menuSetting);
+        const { minMenuWidth, menuWidth }: any = unref(getMenuSetting);
         return {
           left: collapsed ? `${minMenuWidth}px` : `${menuWidth}px`,
           width: `calc(100% - ${collapsed ? `${minMenuWidth}px` : `${menuWidth}px`})`,
@@ -352,7 +352,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0;
-    height: 64px;
+    height: @header-height;
     box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
     transition: all 0.2s ease-in-out;
     width: 100%;

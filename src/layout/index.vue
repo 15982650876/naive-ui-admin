@@ -21,7 +21,7 @@
     </n-layout-sider>
 
     <n-drawer
-      v-model:show="showSideDrawer"
+      v-model:show="showSideDrawder"
       :width="menuWidth"
       :placement="'left'"
       class="layout-side-drawer"
@@ -82,19 +82,21 @@
 
   const { getDarkTheme } = useDesignSetting();
   const {
-    // showFooter,
-    navMode,
-    navTheme,
-    headerSetting,
-    menuSetting,
-    multiTabsSetting,
+    // getShowFooter,
+    getNavMode,
+    getNavTheme,
+    getHeaderSetting,
+    getMenuSetting,
+    getMultiTabsSetting,
   } = useProjectSetting();
 
   const settingStore = useProjectSettingStore();
 
+  const navMode = getNavMode;
+
   const collapsed = ref<boolean>(false);
 
-  const { mobileWidth, menuWidth } = unref(menuSetting);
+  const { mobileWidth, menuWidth } = unref(getMenuSetting);
 
   const isMobile = computed<boolean>({
     get: () => settingStore.getIsMobile,
@@ -102,12 +104,12 @@
   });
 
   const fixedHeader = computed(() => {
-    const { fixed } = unref(headerSetting);
+    const { fixed } = unref(getHeaderSetting);
     return fixed ? 'absolute' : 'static';
   });
 
   const isMixMenuNoneSub = computed(() => {
-    const mixMenu = unref(menuSetting).mixMenu;
+    const mixMenu = settingStore.menuSetting.mixMenu;
     const currentRoute = useRoute();
     if (unref(navMode) != 'horizontal-mix') return true;
     if (unref(navMode) === 'horizontal-mix' && mixMenu && currentRoute.meta.isRoot) {
@@ -117,37 +119,45 @@
   });
 
   const fixedMenu = computed(() => {
-    const { fixed } = unref(headerSetting);
+    const { fixed } = unref(getHeaderSetting);
     return fixed ? 'absolute' : 'static';
   });
 
   const isMultiTabs = computed(() => {
-    return unref(multiTabsSetting).show;
+    return unref(getMultiTabsSetting).show;
   });
 
   const fixedMulti = computed(() => {
-    return unref(multiTabsSetting).fixed;
+    return unref(getMultiTabsSetting).fixed;
   });
 
   const inverted = computed(() => {
-    return ['dark', 'header-dark'].includes(unref(navTheme));
+    return ['dark', 'header-dark'].includes(unref(getNavTheme));
   });
 
   const getHeaderInverted = computed(() => {
-    return ['light', 'header-dark'].includes(unref(navTheme)) ? unref(inverted) : !unref(inverted);
+    const navTheme = unref(getNavTheme);
+    return ['light', 'header-dark'].includes(navTheme) ? unref(inverted) : !unref(inverted);
   });
 
   const leftMenuWidth = computed(() => {
-    const { minMenuWidth, menuWidth } = unref(menuSetting);
+    const { minMenuWidth, menuWidth } = unref(getMenuSetting);
     return collapsed.value ? minMenuWidth : menuWidth;
   });
+
+  // const getChangeStyle = computed(() => {
+  //   const { minMenuWidth, menuWidth } = unref(getMenuSetting);
+  //   return {
+  //     'padding-left': collapsed.value ? `${minMenuWidth}px` : `${menuWidth}px`,
+  //   };
+  // });
 
   const getMenuLocation = computed(() => {
     return 'left';
   });
 
   // 控制显示或隐藏移动端侧边栏
-  const showSideDrawer = computed({
+  const showSideDrawder = computed({
     get: () => isMobile.value && collapsed.value,
     set: (val) => (collapsed.value = val),
   });

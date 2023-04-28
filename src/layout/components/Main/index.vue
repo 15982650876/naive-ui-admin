@@ -30,13 +30,13 @@
       },
     },
     setup() {
-      const { isPageAnimate, pageAnimateType } = useProjectSetting();
+      const { getIsPageAnimate, getPageAnimateType } = useProjectSetting();
       const asyncRouteStore = useAsyncRouteStore();
       // 需要缓存的路由组件
       const keepAliveComponents = computed(() => asyncRouteStore.keepAliveComponents);
 
       const getTransitionName = computed(() => {
-        return unref(isPageAnimate) ? unref(pageAnimateType) : '';
+        return unref(getIsPageAnimate) ? unref(getPageAnimateType) : '';
       });
 
       return {

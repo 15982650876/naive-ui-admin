@@ -21,16 +21,16 @@
   import { zhCN, dateZhCN, darkTheme } from 'naive-ui';
   import { LockScreen } from '@/components/Lockscreen';
   import { AppProvider } from '@/components/Application';
-  import { useScreenLockStore } from '@/store/modules/screenLock.js';
+  import { useLockscreenStore } from '@/store/modules/lockscreen';
   import { useRoute } from 'vue-router';
   import { useDesignSettingStore } from '@/store/modules/designSetting';
   import { lighten } from '@/utils/index';
 
   const route = useRoute();
-  const useScreenLock = useScreenLockStore();
+  const useLockscreen = useLockscreenStore();
   const designStore = useDesignSettingStore();
-  const isLock = computed(() => useScreenLock.isLocked);
-  const lockTime = computed(() => useScreenLock.lockTime);
+  const isLock = computed(() => useLockscreen.isLock);
+  const lockTime = computed(() => useLockscreen.lockTime);
 
   /**
    * @type import('naive-ui').GlobalThemeOverrides
@@ -53,21 +53,21 @@
 
   const getDarkTheme = computed(() => (designStore.darkTheme ? darkTheme : undefined));
 
-  let timer: NodeJS.Timer;
+  let timer;
 
   const timekeeping = () => {
     clearInterval(timer);
     if (route.name == 'login' || isLock.value) return;
     // 设置不锁屏
-    useScreenLock.setLock(false);
+    useLockscreen.setLock(false);
     // 重置锁屏时间
-    useScreenLock.setLockTime();
+    useLockscreen.setLockTime();
     timer = setInterval(() => {
       // 锁屏倒计时递减
-      useScreenLock.setLockTime(lockTime.value - 1);
+      useLockscreen.setLockTime(lockTime.value - 1);
       if (lockTime.value <= 0) {
         // 设置锁屏
-        useScreenLock.setLock(true);
+        useLockscreen.setLock(true);
         return clearInterval(timer);
       }
     }, 1000);

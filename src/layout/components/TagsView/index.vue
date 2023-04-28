@@ -1,6 +1,6 @@
 <template>
   <div
-    class="box-border tabs-view"
+    class="tabs-view box-border"
     :class="{
       'tabs-view-fix': multiTabsSetting.fixed,
       'tabs-view-fixed-header': isMultiHeaderFixed,
@@ -82,6 +82,7 @@
     computed,
     ref,
     toRefs,
+    unref,
     provide,
     watch,
     onMounted,
@@ -129,7 +130,7 @@
     },
     setup(props) {
       const { getDarkTheme, getAppTheme } = useDesignSetting();
-      const { navMode, headerSetting, menuSetting, multiTabsSetting, isMobile } =
+      const { getNavMode, getHeaderSetting, getMenuSetting, getMultiTabsSetting, getIsMobile } =
         useProjectSetting();
       const settingStore = useProjectSettingStore();
 
@@ -160,7 +161,7 @@
         dropdownY: 0,
         showDropdown: false,
         isMultiHeaderFixed: false,
-        multiTabsSetting: multiTabsSetting,
+        multiTabsSetting: getMultiTabsSetting,
       });
 
       // 获取简易的路由对象
@@ -172,23 +173,25 @@
       const isMixMenuNoneSub = computed(() => {
         const mixMenu = settingStore.menuSetting.mixMenu;
         const currentRoute = useRoute();
-        if (navMode.value != 'horizontal-mix') return true;
-        return !(navMode.value === 'horizontal-mix' && mixMenu && currentRoute.meta.isRoot);
+        const navMode = unref(getNavMode);
+        if (unref(navMode) != 'horizontal-mix') return true;
+        return !(unref(navMode) === 'horizontal-mix' && mixMenu && currentRoute.meta.isRoot);
       });
 
       //动态组装样式 菜单缩进
       const getChangeStyle = computed(() => {
         const { collapsed } = props;
-        const { minMenuWidth, menuWidth }: any = menuSetting.value;
-        const { fixed }: any = multiTabsSetting.value;
+        const navMode = unref(getNavMode);
+        const { minMenuWidth, menuWidth }: any = unref(getMenuSetting);
+        const { fixed }: any = unref(getMultiTabsSetting);
         let lenNum =
-          navMode.value === 'horizontal' || !isMixMenuNoneSub.value
+          navMode === 'horizontal' || !isMixMenuNoneSub.value
             ? '0px'
             : collapsed
             ? `${minMenuWidth}px`
             : `${menuWidth}px`;
 
-        if (isMobile.value) {
+        if (getIsMobile.value) {
           return {
             left: '0px',
             width: '100%',
@@ -202,7 +205,7 @@
 
       //tags 右侧下拉菜单
       const TabsMenuOptions = computed(() => {
-        const isDisabled = tabsList.value.length <= 1;
+        const isDisabled = unref(tabsList).length <= 1;
         return [
           {
             label: '刷新当前',
@@ -212,7 +215,7 @@
           {
             label: `关闭当前`,
             key: '2',
-            disabled: isCurrent.value || isDisabled,
+            disabled: unref(isCurrent) || isDisabled,
             icon: renderIcon(CloseOutlined),
           },
           {
@@ -260,8 +263,8 @@
           window.pageYOffset ||
           document.body.scrollTop; // 滚动条偏移量
         state.isMultiHeaderFixed = !!(
-          !headerSetting.value.fixed &&
-          multiTabsSetting.value.fixed &&
+          !getHeaderSetting.value.fixed &&
+          getMultiTabsSetting.value.fixed &&
           scrollTop >= 64
         );
       }
@@ -294,7 +297,7 @@
         (to) => {
           if (whiteList.includes(route.name as string)) return;
           state.activeKey = to;
-          tabsViewStore.addTab(getSimpleRoute(route));
+          tabsViewStore.addTabs(getSimpleRoute(route));
           updateNavScroll(true);
         },
         { immediate: true }
@@ -325,7 +328,7 @@
       const reloadPage = () => {
         delKeepAliveCompName();
         router.push({
-          path: '/redirect' + route.fullPath,
+          path: '/redirect' + unref(route).fullPath,
         });
       };
 
